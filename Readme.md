@@ -4,13 +4,13 @@
 - Write the command **javac CustomSocketFactory.java ServerInterface.java Response.java Server.java Client.java** 
 - (Note the ordering should be same as described because server and client classes depends on Response and ServerInterface files)
 - This will generate .class files for each source file.
-- To run the server write the command **java -cp . Server <PORT> <ServerName>**
+- To run the server write the command **java -cp . Server &lt;PORT&gt; &lt;ServerName&gt;**
 - You can write required PORT in place of <PORT> in the command and required Server name in place of Server Name to bind this name with server reference. e.g.
 
 ` `java -cp . Server 32000 Server
 
 - This will start the server which will be listening to requests at the given port number
-- Now open a second terminal in the same folder and write the command **java -cp . Client <host Address> <PORT><ServerName>**
+- Now open a second terminal in the same folder and write the command **java -cp . Client &lt;host Address&gt; &lt;PORT&gt;&lt;ServerName&gt;**
 - Replace host address, PORT and ServerName with server's address, port and name of server e.g. java -cp . Client localhost 32000 Server
 
 - This will start the client in this terminal. Some pre-defined requests will be sent to the server. After that, the client will be run in interactive mode where the user can request put, get or delete from the server
