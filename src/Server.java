@@ -1,4 +1,5 @@
 import java.rmi.RemoteException;
+import java.rmi.UnmarshalException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.RemoteServer;
@@ -41,10 +42,15 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
   public synchronized Response put(String key, String value) throws RemoteException, ServerNotActiveException {
     store.put(key, value);
     String clientHost = RemoteServer.getClientHost();
-    System.out.println(getCurrentTime() + " Received PUT REQUEST" + " FROM " + clientHost +
-            " with key = " + key + " and value = " + value);
-    return new Response("200", "PUT Request successful with key = " + key + " and value = "
+
+    Response res = new Response("200", "PUT Request successful with key = " + key + " and value = "
             + value);
+    System.out.println(getCurrentTime() + " Received PUT REQUEST" + " FROM " + clientHost +
+            " with key = " + key + " and value = " + value + " " + res);
+    return res;
+
+    //To mimic Malformed Response
+    //return (Response) new Object();
   }
 
   //A method to handle remote GET requests. Takes key as argument.
@@ -55,12 +61,15 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
   @Override
   public synchronized Response get(String key) throws RemoteException, ServerNotActiveException {
     String clientHost = RemoteServer.getClientHost();
-    System.out.println(getCurrentTime() + " Received GET REQUEST " + " FROM " + clientHost
-            + " with key = " + key);
+    Response res = null;
     if (!store.containsKey(key)) {
-      return new Response("404", "Key = " + key + " not found");
+      res = new Response("404", "Key = " + key + " not found");
+    } else {
+      res = new Response("200", "GET Request Successful with key = " + key + ", value = " + store.get(key));
     }
-    return new Response("200", "GET Request Successful with key = " + key + ", value = " + store.get(key));
+    System.out.println(getCurrentTime() + " Received GET REQUEST " + " FROM " + clientHost
+            + " with key = " + key + " " + res);
+    return res;
   }
 
   //A method to handle remote DELETE requests. Takes key as argument.
@@ -71,13 +80,16 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
   @Override
   public synchronized Response delete(String key) throws RemoteException, ServerNotActiveException {
     String clientHost = RemoteServer.getClientHost();
-    System.out.println(getCurrentTime() + " Received DELETE REQUEST " + " FROM " + clientHost +
-            " with key = " + key);
+    Response res = null;
     if (!store.containsKey(key)) {
-      return new Response("404", "Key = " + key + " not found");
+      res = new Response("404", "Key = " + key + " not found");
+    } else {
+      store.remove(key);
+      res = new Response("200", "DELETE Request successful with key = " + key);
     }
-    store.remove(key);
-    return new Response("200", "DELETE Request successful with key = " + key);
+    System.out.println(getCurrentTime() + " Received DELETE REQUEST " + " FROM " + clientHost +
+            " with key = " + key + " " + res);
+    return res;
   }
 
   public static void main(String[] args) {

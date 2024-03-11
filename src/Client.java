@@ -119,8 +119,15 @@ public class Client {
     String name = args[2];
 
     try {
-      //Get the remote server reference using LocateRegistry.getRegistry
-      Registry registry = LocateRegistry.getRegistry(address, PORT);
+      //Set timeout. Max wait for 10 seconds
+      int timeout = 10000; // 10 seconds
+      //Set timeout property of rmi tcp layer
+      System.setProperty("sun.rmi.transport.tcp.responseTimeout", String.valueOf(timeout));
+      //Create custom socket factory object
+      CustomSocketFactory socketFactory = new CustomSocketFactory(timeout);
+      //Get the remote server reference using LocateRegistry.getRegistry and add socketFactry to enable
+      //timeout. Here max wait is 10 seconds.
+      Registry registry = LocateRegistry.getRegistry(address, PORT,socketFactory);
       //Get the remote reference bound to the specified name in this registry
       ServerInterface server = (ServerInterface) registry.lookup(name);
 
